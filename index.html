@@ -258,6 +258,19 @@
             cursor: not-allowed;
         }
 
+        /* Download button green glow after completion */
+        .btn-glow {
+            animation: greenGlow 1.5s ease-in-out infinite alternate;
+            background: #2e7d32 !important;
+            color: #fff !important;
+            border-color: #4caf50 !important;
+        }
+
+        @keyframes greenGlow {
+            from { box-shadow: 0 0 8px rgba(76, 175, 80, 0.4); }
+            to { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), 0 0 40px rgba(76, 175, 80, 0.3); }
+        }
+
         /* Progress */
         .progress-container {
             margin-bottom: 1.5rem;
@@ -307,7 +320,7 @@
         /* Image Grid */
         .image-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 1rem;
         }
 
@@ -334,18 +347,41 @@
             padding: 0.6rem 0.75rem;
         }
 
-        .image-card-name {
-            font-size: 0.8rem;
+        /* Editable filename input */
+        .image-card-name-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
             color: #ccc;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+            font-family: inherit;
+            padding: 2px 4px;
+            margin: -2px -4px;
+            margin-bottom: 0.2rem;
+            border-radius: 4px;
+            outline: none;
+            display: block;
+        }
+
+        .image-card-name-input:hover {
+            border-color: #3a3a3a;
+        }
+
+        .image-card-name-input:focus {
+            border-color: #5b9cf5;
+            background: #2a2a2a;
         }
 
         .image-card-dims {
             font-size: 0.75rem;
             color: #666;
+        }
+
+        .image-card-size {
+            font-size: 0.7rem;
+            color: #5bf5a0;
+            margin-top: 0.15rem;
+            font-weight: 500;
         }
 
         .image-card-status {
@@ -354,16 +390,94 @@
             font-weight: 600;
         }
 
-        .status-ready {
-            color: #5b9cf5;
-        }
-
         .status-done {
             color: #5bf5a0;
         }
 
-        .status-warning {
-            color: #f5c85b;
+        /* Card action buttons */
+        .image-card-actions {
+            display: flex;
+            gap: 0.4rem;
+            padding: 0 0.75rem 0.6rem;
+        }
+
+        .image-card-actions button {
+            flex: 1;
+            padding: 0.35rem 0;
+            font-size: 0.7rem;
+            border-radius: 6px;
+            border: 1px solid #3a3a3a;
+            background: #2a2a2a;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+
+        .image-card-actions button:hover {
+            background: #333;
+            border-color: #555;
+        }
+
+        .card-download-btn {
+            color: #5bf5a0 !important;
+            border-color: #2e5a2e !important;
+        }
+
+        .card-download-btn:hover {
+            background: #1e3a1e !important;
+        }
+
+        .card-crop-btn {
+            color: #f5c85b !important;
+            border-color: #5a4a1e !important;
+        }
+
+        .card-crop-btn:hover {
+            background: #3a3a1e !important;
+        }
+
+        .card-bg-btn {
+            color: #c49cf5 !important;
+            border-color: #4a2e6a !important;
+        }
+
+        .card-bg-btn:hover {
+            background: #2a1e3a !important;
+        }
+
+        .card-bg-done {
+            color: #888 !important;
+            border-color: #3a3a3a !important;
+            cursor: default !important;
+        }
+
+        .btn-bg {
+            background: #2a1e3a;
+            color: #c49cf5;
+            border: 1px solid #4a2e6a;
+        }
+
+        .btn-bg:hover:not(:disabled) {
+            background: #3a2e4a;
+        }
+
+        .status-bg {
+            color: #c49cf5;
+        }
+
+        /* Checkerboard behind transparent thumbnails */
+        .image-card.bg-removed img {
+            background-image: linear-gradient(45deg, #2a2a2a 25%, transparent 25%),
+                              linear-gradient(-45deg, #2a2a2a 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #2a2a2a 75%),
+                              linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0;
         }
 
         .image-card .remove-btn {
@@ -392,8 +506,135 @@
         }
 
         .remove-btn:hover {
-            background: rgba(200, 50, 50, 0.8);
+            background: rgba(200, 50, 50, 0.8) !important;
             color: #fff;
+        }
+
+        /* Crop Modal */
+        .crop-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .crop-modal {
+            background: #1a1a1a;
+            border-radius: 16px;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 400px;
+        }
+
+        .crop-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .crop-modal-header h3 {
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .crop-modal-body {
+            position: relative;
+            overflow: auto;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .crop-canvas-container {
+            position: relative;
+            display: inline-block;
+            cursor: crosshair;
+            user-select: none;
+        }
+
+        .crop-canvas-container img {
+            display: block;
+            max-width: 70vw;
+            max-height: 60vh;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        .crop-selection {
+            position: absolute;
+            border: 2px dashed #5b9cf5;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .crop-dims-label {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #5b9cf5;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.8);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .crop-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .crop-modal-footer button {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e3a1e;
+            color: #5bf5a0;
+            border: 1px solid #2e5a2e;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            transform: translateY(120%);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            pointer-events: none;
+        }
+
+        .toast.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            font-size: 1.3rem;
         }
 
         /* Responsive */
@@ -408,7 +649,12 @@
             }
 
             .image-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            .crop-modal {
+                min-width: unset;
+                max-width: 95vw;
             }
         }
     </style>
@@ -477,6 +723,7 @@
         <!-- Actions -->
         <div class="actions">
             <button class="btn-primary" id="downscaleBtn" disabled>Downscale All</button>
+            <button class="btn-bg" id="removeBgAllBtn" disabled>Remove BG All</button>
             <button class="btn-secondary" id="downloadBtn" disabled>Download All (.zip)</button>
             <button class="btn-danger" id="clearBtn" disabled>Clear All</button>
         </div>
@@ -501,14 +748,54 @@
         <div class="image-grid" id="imageGrid"></div>
     </div>
 
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">&#10004;</span>
+        <span id="toastMessage">All images downscaled successfully!</span>
+    </div>
+
+    <!-- Crop Modal -->
+    <div class="crop-modal-overlay" id="cropModalOverlay" style="display: none;">
+        <div class="crop-modal">
+            <div class="crop-modal-header">
+                <h3 id="cropModalTitle">Crop Image</h3>
+                <button class="btn-secondary" id="cropCancelBtn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Cancel</button>
+            </div>
+            <div class="crop-modal-body">
+                <div class="crop-canvas-container" id="cropContainer">
+                    <img id="cropImage" src="" alt="Crop preview">
+                    <div class="crop-selection" id="cropSelection" style="display: none;">
+                        <div class="crop-dims-label" id="cropDimsLabel"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="crop-modal-footer">
+                <button class="btn-secondary" id="cropResetBtn">Reset Crop</button>
+                <button class="btn-primary" id="cropApplyBtn" disabled>Apply Crop</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // ── State ──────────────────────────────────────────
+
         const state = {
-            images: [],       // { id, file, name, originalWidth, originalHeight, dataUrl, processedBlob, processed }
+            images: [],
             nextId: 0,
             processing: false
         };
 
-        // DOM refs
+        const cropState = {
+            imageId: null,
+            startX: 0,
+            startY: 0,
+            currentRect: null,
+            isDragging: false,
+            displayScale: 1
+        };
+
+        // ── DOM Refs ───────────────────────────────────────
+
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
         const presetSelect = document.getElementById('presetSelect');
@@ -520,6 +807,7 @@
         const qualityValue = document.getElementById('qualityValue');
         const qualityGroup = document.getElementById('qualityGroup');
         const downscaleBtn = document.getElementById('downscaleBtn');
+        const removeBgAllBtn = document.getElementById('removeBgAllBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const clearBtn = document.getElementById('clearBtn');
         const progressContainer = document.getElementById('progressContainer');
@@ -529,27 +817,94 @@
         const imageCounter = document.getElementById('imageCounter');
         const imageCount = document.getElementById('imageCount');
         const imageGrid = document.getElementById('imageGrid');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const cropModalOverlay = document.getElementById('cropModalOverlay');
+        const cropContainer = document.getElementById('cropContainer');
+        const cropImage = document.getElementById('cropImage');
+        const cropSelection = document.getElementById('cropSelection');
+        const cropDimsLabel = document.getElementById('cropDimsLabel');
+        const cropApplyBtn = document.getElementById('cropApplyBtn');
+        const cropResetBtn = document.getElementById('cropResetBtn');
+        const cropCancelBtn = document.getElementById('cropCancelBtn');
+        const cropModalTitle = document.getElementById('cropModalTitle');
+
+        // ── Helpers ────────────────────────────────────────
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        let toastTimeout = null;
+        function showToast(message, duration) {
+            duration = duration || 4000;
+            toastMessage.textContent = message;
+            toast.classList.add('visible');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(function() {
+                toast.classList.remove('visible');
+            }, duration);
+        }
+
+        // ── Background Removal Library (Lazy Load) ─────────
+
+        var bgRemovalLib = null;
+        async function loadBgRemoval() {
+            if (!bgRemovalLib) {
+                bgRemovalLib = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.5/+esm');
+            }
+            return bgRemovalLib;
+        }
+
+        function dataUrlToBlob(dataUrl) {
+            var parts = dataUrl.split(',');
+            var mime = parts[0].match(/:(.*?);/)[1];
+            var binary = atob(parts[1]);
+            var array = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i++) {
+                array[i] = binary.charCodeAt(i);
+            }
+            return new Blob([array], { type: mime });
+        }
+
+        function blobToDataUrl(blob) {
+            return new Promise(function(resolve) {
+                var reader = new FileReader();
+                reader.onload = function() { resolve(reader.result); };
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        async function removeImageBg(imgObj) {
+            var lib = await loadBgRemoval();
+            var inputBlob = dataUrlToBlob(imgObj.dataUrl);
+            var resultBlob = await lib.removeBackground(inputBlob);
+            var resultDataUrl = await blobToDataUrl(resultBlob);
+            return resultDataUrl;
+        }
 
         // ── Drag & Drop ────────────────────────────────────
 
-        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('click', function() { fileInput.click(); });
 
-        dropZone.addEventListener('dragover', (e) => {
+        dropZone.addEventListener('dragover', function(e) {
             e.preventDefault();
             dropZone.classList.add('drag-over');
         });
 
-        dropZone.addEventListener('dragleave', () => {
+        dropZone.addEventListener('dragleave', function() {
             dropZone.classList.remove('drag-over');
         });
 
-        dropZone.addEventListener('drop', (e) => {
+        dropZone.addEventListener('drop', function(e) {
             e.preventDefault();
             dropZone.classList.remove('drag-over');
             handleFiles(e.dataTransfer.files);
         });
 
-        fileInput.addEventListener('change', () => {
+        fileInput.addEventListener('change', function() {
             handleFiles(fileInput.files);
             fileInput.value = '';
         });
@@ -557,23 +912,33 @@
         // ── File Handling ──────────────────────────────────
 
         function handleFiles(fileList) {
-            const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+            var files = Array.from(fileList).filter(function(f) {
+                return f.type.startsWith('image/');
+            });
             if (files.length === 0) return;
 
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
+            files.forEach(function(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onload = function() {
                         state.images.push({
                             id: state.nextId++,
-                            file,
+                            file: file,
                             name: file.name,
+                            displayName: file.name,
                             originalWidth: img.naturalWidth,
                             originalHeight: img.naturalHeight,
+                            effectiveWidth: img.naturalWidth,
+                            effectiveHeight: img.naturalHeight,
                             dataUrl: e.target.result,
                             processedBlob: null,
-                            processed: false
+                            processedSize: null,
+                            processed: false,
+                            cropRegion: null,
+                            croppedDataUrl: null,
+                            bgRemoved: false,
+                            bgRemovedDataUrl: null
                         });
                         updateUI();
                     };
@@ -585,42 +950,40 @@
 
         // ── Resolution Controls ────────────────────────────
 
-        presetSelect.addEventListener('change', () => {
-            const val = presetSelect.value;
+        presetSelect.addEventListener('change', function() {
+            var val = presetSelect.value;
             if (val === 'custom') {
                 widthInput.removeAttribute('readonly');
                 heightInput.removeAttribute('readonly');
             } else {
-                const [w, h] = val.split('x').map(Number);
-                widthInput.value = w;
-                heightInput.value = h;
+                var parts = val.split('x');
+                widthInput.value = parseInt(parts[0]);
+                heightInput.value = parseInt(parts[1]);
                 widthInput.setAttribute('readonly', true);
                 heightInput.setAttribute('readonly', true);
             }
         });
 
-        // Lock dimensions on non-custom presets initially
         widthInput.setAttribute('readonly', true);
         heightInput.setAttribute('readonly', true);
 
-        // Quality slider
-        qualitySlider.addEventListener('input', () => {
+        qualitySlider.addEventListener('input', function() {
             qualityValue.textContent = qualitySlider.value + '%';
         });
 
-        // Toggle quality visibility for PNG
-        formatSelect.addEventListener('change', () => {
+        formatSelect.addEventListener('change', function() {
             qualityGroup.style.display = formatSelect.value === 'image/png' ? 'none' : '';
         });
 
         // ── Update UI ──────────────────────────────────────
 
         function updateUI() {
-            const count = state.images.length;
-            const hasImages = count > 0;
-            const hasProcessed = state.images.some(img => img.processed);
+            var count = state.images.length;
+            var hasImages = count > 0;
+            var hasProcessed = state.images.some(function(img) { return img.processed; });
 
             downscaleBtn.disabled = !hasImages || state.processing;
+            removeBgAllBtn.disabled = !hasImages || state.processing;
             downloadBtn.disabled = !hasProcessed || state.processing;
             clearBtn.disabled = !hasImages || state.processing;
 
@@ -632,90 +995,199 @@
 
         function renderGrid() {
             imageGrid.innerHTML = '';
-            state.images.forEach(img => {
-                const card = document.createElement('div');
+            state.images.forEach(function(img) {
+                var card = document.createElement('div');
                 card.className = 'image-card';
 
-                const thumbnail = document.createElement('img');
-                thumbnail.src = img.processedBlob
-                    ? URL.createObjectURL(img.processedBlob)
-                    : img.dataUrl;
-                thumbnail.alt = img.name;
+                // Add checkerboard class for BG-removed images
+                if (img.bgRemoved) {
+                    card.className = 'image-card bg-removed';
+                }
 
-                const removeBtn = document.createElement('button');
+                // Thumbnail (priority: processed > cropped > bgRemoved > original)
+                var thumbnail = document.createElement('img');
+                if (img.processedBlob) {
+                    thumbnail.src = URL.createObjectURL(img.processedBlob);
+                } else if (img.croppedDataUrl) {
+                    thumbnail.src = img.croppedDataUrl;
+                } else if (img.bgRemovedDataUrl) {
+                    thumbnail.src = img.bgRemovedDataUrl;
+                } else {
+                    thumbnail.src = img.dataUrl;
+                }
+                thumbnail.alt = img.displayName;
+
+                // Remove button
+                var removeBtn = document.createElement('button');
                 removeBtn.className = 'remove-btn';
                 removeBtn.innerHTML = '&times;';
                 removeBtn.title = 'Remove';
-                removeBtn.addEventListener('click', (e) => {
+                removeBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    state.images = state.images.filter(i => i.id !== img.id);
+                    state.images = state.images.filter(function(i) { return i.id !== img.id; });
                     updateUI();
                 });
 
-                const info = document.createElement('div');
+                // Info section
+                var info = document.createElement('div');
                 info.className = 'image-card-info';
 
-                const nameEl = document.createElement('div');
-                nameEl.className = 'image-card-name';
-                nameEl.textContent = img.name;
-                nameEl.title = img.name;
+                // Editable filename
+                var nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'image-card-name-input';
+                nameInput.value = img.displayName;
+                nameInput.title = img.displayName;
+                nameInput.addEventListener('change', function(e) {
+                    var newName = e.target.value.trim();
+                    if (newName) {
+                        img.displayName = newName;
+                    } else {
+                        img.displayName = img.name;
+                        e.target.value = img.name;
+                    }
+                });
+                nameInput.addEventListener('click', function(e) { e.stopPropagation(); });
 
-                const dimsEl = document.createElement('div');
+                // Dimensions
+                var dimsEl = document.createElement('div');
                 dimsEl.className = 'image-card-dims';
-                dimsEl.textContent = `${img.originalWidth} × ${img.originalHeight}`;
+                if (img.cropRegion) {
+                    dimsEl.textContent = img.effectiveWidth + ' \u00d7 ' + img.effectiveHeight + ' (cropped)';
+                } else {
+                    dimsEl.textContent = img.originalWidth + ' \u00d7 ' + img.originalHeight;
+                }
 
-                info.appendChild(nameEl);
+                info.appendChild(nameInput);
                 info.appendChild(dimsEl);
 
+                // File size (after processing)
+                if (img.processed && img.processedSize != null) {
+                    var sizeEl = document.createElement('div');
+                    sizeEl.className = 'image-card-size';
+                    sizeEl.textContent = formatFileSize(img.processedSize);
+                    info.appendChild(sizeEl);
+                }
+
+                // BG Removed status
+                if (img.bgRemoved) {
+                    var bgStatusEl = document.createElement('div');
+                    bgStatusEl.className = 'image-card-status status-bg';
+                    bgStatusEl.textContent = 'BG Removed';
+                    info.appendChild(bgStatusEl);
+                }
+
+                // Downscaled status
                 if (img.processed) {
-                    const statusEl = document.createElement('div');
+                    var statusEl = document.createElement('div');
                     statusEl.className = 'image-card-status status-done';
                     statusEl.textContent = 'Downscaled';
                     info.appendChild(statusEl);
                 }
 
+                // Action buttons
+                var actionsRow = document.createElement('div');
+                actionsRow.className = 'image-card-actions';
+
+                // Crop button
+                var cropBtn = document.createElement('button');
+                cropBtn.className = 'card-crop-btn';
+                cropBtn.innerHTML = '&#9986; Crop';
+                cropBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openCropModal(img.id);
+                });
+                actionsRow.appendChild(cropBtn);
+
+                // BG removal button
+                var bgBtn = document.createElement('button');
+                if (img.bgRemoved) {
+                    bgBtn.className = 'card-bg-done';
+                    bgBtn.textContent = 'BG \u2713';
+                    bgBtn.disabled = true;
+                } else {
+                    bgBtn.className = 'card-bg-btn';
+                    bgBtn.textContent = 'Rm BG';
+                    bgBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        removeSingleBg(img.id);
+                    });
+                }
+                actionsRow.appendChild(bgBtn);
+
+                // Individual download button (only if processed)
+                if (img.processed) {
+                    var dlBtn = document.createElement('button');
+                    dlBtn.className = 'card-download-btn';
+                    dlBtn.innerHTML = '&#8595; Save';
+                    dlBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        downloadSingleImage(img);
+                    });
+                    actionsRow.appendChild(dlBtn);
+                }
+
                 card.appendChild(thumbnail);
                 card.appendChild(removeBtn);
                 card.appendChild(info);
+                card.appendChild(actionsRow);
                 imageGrid.appendChild(card);
             });
         }
 
+        // ── Individual Download ────────────────────────────
+
+        function downloadSingleImage(img) {
+            var format = formatSelect.value;
+            var ext = format === 'image/png' ? '.png'
+                    : format === 'image/webp' ? '.webp'
+                    : '.jpg';
+            var baseName = img.displayName.replace(/\.[^.]+$/, '');
+            var fileName = baseName + '_downscaled' + ext;
+            saveAs(img.processedBlob, fileName);
+        }
+
         // ── Downscale Engine ───────────────────────────────
 
-        function getTargetDimensions(origW, origH) {
-            const targetW = parseInt(widthInput.value) || origW;
-            const targetH = parseInt(heightInput.value) || origH;
+        function getTargetDimensions(effW, effH) {
+            var targetW = parseInt(widthInput.value) || effW;
+            var targetH = parseInt(heightInput.value) || effH;
 
             if (aspectRatioCheck.checked) {
-                const ratio = origW / origH;
-                // Fit within the target width, calculate height from aspect ratio
-                const newW = Math.min(targetW, origW);
-                const newH = Math.round(newW / ratio);
+                var ratio = effW / effH;
+                var newW = Math.min(targetW, effW);
+                var newH = Math.round(newW / ratio);
                 return { width: newW, height: newH };
             }
 
             return {
-                width: Math.min(targetW, origW),
-                height: Math.min(targetH, origH)
+                width: Math.min(targetW, effW),
+                height: Math.min(targetH, effH)
             };
         }
 
-        function downscaleImage(imageData, targetW, targetH, format, quality) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
+        function downscaleImage(imageData, targetW, targetH, format, quality, cropRegion) {
+            return new Promise(function(resolve) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
                     canvas.width = targetW;
                     canvas.height = targetH;
 
-                    const ctx = canvas.getContext('2d');
-                    // Use high-quality resampling
+                    var ctx = canvas.getContext('2d');
                     ctx.imageSmoothingEnabled = true;
                     ctx.imageSmoothingQuality = 'high';
-                    ctx.drawImage(img, 0, 0, targetW, targetH);
 
-                    canvas.toBlob((blob) => {
+                    if (cropRegion) {
+                        ctx.drawImage(img,
+                            cropRegion.x, cropRegion.y, cropRegion.width, cropRegion.height,
+                            0, 0, targetW, targetH
+                        );
+                    } else {
+                        ctx.drawImage(img, 0, 0, targetW, targetH);
+                    }
+
+                    canvas.toBlob(function(blob) {
                         resolve(blob);
                     }, format, format === 'image/png' ? undefined : quality / 100);
                 };
@@ -723,33 +1195,42 @@
             });
         }
 
-        downscaleBtn.addEventListener('click', async () => {
+        downscaleBtn.addEventListener('click', async function() {
             if (state.images.length === 0 || state.processing) return;
+
+            // Warn if JPEG selected but some images have BG removed
+            var format = formatSelect.value;
+            var hasBgRemoved = state.images.some(function(img) { return img.bgRemoved; });
+            if (format === 'image/jpeg' && hasBgRemoved) {
+                if (!confirm('JPEG does not support transparency. Background-removed images will have a white background.\n\nSwitch to PNG or WebP to keep transparency.\n\nContinue with JPEG?')) {
+                    return;
+                }
+            }
 
             state.processing = true;
             downscaleBtn.disabled = true;
             downloadBtn.disabled = true;
             clearBtn.disabled = true;
+            downloadBtn.classList.remove('btn-glow');
             progressContainer.classList.add('visible');
+            var quality = parseInt(qualitySlider.value);
+            var total = state.images.length;
 
-            const format = formatSelect.value;
-            const quality = parseInt(qualitySlider.value);
-            const total = state.images.length;
+            for (var i = 0; i < total; i++) {
+                var img = state.images[i];
+                var dims = getTargetDimensions(img.effectiveWidth, img.effectiveHeight);
 
-            for (let i = 0; i < total; i++) {
-                const img = state.images[i];
-                const { width, height } = getTargetDimensions(img.originalWidth, img.originalHeight);
-
-                progressText.textContent = `Processing ${i + 1} of ${total}: ${img.name}`;
-                const pct = Math.round(((i) / total) * 100);
+                progressText.textContent = 'Processing ' + (i + 1) + ' of ' + total + ': ' + img.displayName;
+                var pct = Math.round((i / total) * 100);
                 progressPercent.textContent = pct + '%';
                 progressFill.style.width = pct + '%';
 
-                // Yield to the browser for UI updates
-                await new Promise(r => setTimeout(r, 10));
+                await new Promise(function(r) { setTimeout(r, 10); });
 
-                const blob = await downscaleImage(img.dataUrl, width, height, format, quality);
+                var source = img.bgRemovedDataUrl || img.dataUrl;
+                var blob = await downscaleImage(source, dims.width, dims.height, format, quality, img.cropRegion);
                 img.processedBlob = blob;
+                img.processedSize = blob.size;
                 img.processed = true;
 
                 renderGrid();
@@ -762,47 +1243,50 @@
             state.processing = false;
             updateUI();
 
-            // Hide progress after a moment
-            setTimeout(() => {
+            // Completion notification
+            showToast('All ' + total + ' images downscaled successfully!');
+            downloadBtn.classList.add('btn-glow');
+
+            setTimeout(function() {
                 progressContainer.classList.remove('visible');
             }, 2000);
         });
 
         // ── Download as Zip ────────────────────────────────
 
-        downloadBtn.addEventListener('click', async () => {
-            const processed = state.images.filter(img => img.processed);
+        downloadBtn.addEventListener('click', async function() {
+            var processed = state.images.filter(function(img) { return img.processed; });
             if (processed.length === 0) return;
 
+            downloadBtn.classList.remove('btn-glow');
             downloadBtn.disabled = true;
             progressContainer.classList.add('visible');
             progressText.textContent = 'Packaging zip...';
             progressPercent.textContent = '0%';
             progressFill.style.width = '0%';
 
-            const zip = new JSZip();
-            const format = formatSelect.value;
-            const ext = format === 'image/png' ? '.png'
-                      : format === 'image/webp' ? '.webp'
-                      : '.jpg';
+            var zip = new JSZip();
+            var format = formatSelect.value;
+            var ext = format === 'image/png' ? '.png'
+                    : format === 'image/webp' ? '.webp'
+                    : '.jpg';
 
-            processed.forEach((img, i) => {
-                // Strip original extension and add new one
-                const baseName = img.name.replace(/\.[^.]+$/, '');
-                const fileName = `${baseName}_downscaled${ext}`;
+            processed.forEach(function(img, i) {
+                var baseName = img.displayName.replace(/\.[^.]+$/, '');
+                var fileName = baseName + '_downscaled' + ext;
                 zip.file(fileName, img.processedBlob);
 
-                const pct = Math.round(((i + 1) / processed.length) * 50);
+                var pct = Math.round(((i + 1) / processed.length) * 50);
                 progressPercent.textContent = pct + '%';
                 progressFill.style.width = pct + '%';
             });
 
             progressText.textContent = 'Generating zip file...';
 
-            const content = await zip.generateAsync(
+            var content = await zip.generateAsync(
                 { type: 'blob' },
-                (metadata) => {
-                    const pct = 50 + Math.round(metadata.percent / 2);
+                function(metadata) {
+                    var pct = 50 + Math.round(metadata.percent / 2);
                     progressPercent.textContent = pct + '%';
                     progressFill.style.width = pct + '%';
                 }
@@ -816,17 +1300,289 @@
 
             downloadBtn.disabled = false;
 
-            setTimeout(() => {
+            setTimeout(function() {
                 progressContainer.classList.remove('visible');
             }, 2000);
         });
 
+        // ── Background Removal ─────────────────────────────
+
+        async function removeSingleBg(imageId) {
+            var img = state.images.find(function(i) { return i.id === imageId; });
+            if (!img || img.bgRemoved || state.processing) return;
+
+            state.processing = true;
+            updateUI();
+            progressContainer.classList.add('visible');
+            progressText.textContent = 'Loading AI model (first time may take a moment)...';
+            progressPercent.textContent = '';
+            progressFill.style.width = '0%';
+
+            try {
+                await loadBgRemoval();
+                progressText.textContent = 'Removing background: ' + img.displayName;
+                progressFill.style.width = '50%';
+                await new Promise(function(r) { setTimeout(r, 10); });
+
+                var resultDataUrl = await removeImageBg(img);
+                img.bgRemovedDataUrl = resultDataUrl;
+                img.bgRemoved = true;
+                img.processed = false;
+                img.processedBlob = null;
+                img.processedSize = null;
+
+                progressText.textContent = 'Done!';
+                progressFill.style.width = '100%';
+                progressPercent.textContent = '100%';
+                showToast('Background removed from ' + img.displayName);
+            } catch (err) {
+                showToast('Error removing background. Please try again.');
+                console.error('BG removal error:', err);
+            }
+
+            state.processing = false;
+            updateUI();
+            setTimeout(function() { progressContainer.classList.remove('visible'); }, 2000);
+        }
+
+        removeBgAllBtn.addEventListener('click', async function() {
+            if (state.images.length === 0 || state.processing) return;
+
+            var toProcess = state.images.filter(function(img) { return !img.bgRemoved; });
+            if (toProcess.length === 0) {
+                showToast('All images already have backgrounds removed.');
+                return;
+            }
+
+            state.processing = true;
+            updateUI();
+            progressContainer.classList.add('visible');
+            progressText.textContent = 'Loading AI model (first time may take a moment)...';
+            progressPercent.textContent = '0%';
+            progressFill.style.width = '0%';
+
+            try {
+                await loadBgRemoval();
+
+                var total = toProcess.length;
+                for (var i = 0; i < total; i++) {
+                    var img = toProcess[i];
+
+                    progressText.textContent = 'Removing background ' + (i + 1) + ' of ' + total + ': ' + img.displayName;
+                    var pct = Math.round((i / total) * 100);
+                    progressPercent.textContent = pct + '%';
+                    progressFill.style.width = pct + '%';
+
+                    await new Promise(function(r) { setTimeout(r, 10); });
+
+                    var resultDataUrl = await removeImageBg(img);
+                    img.bgRemovedDataUrl = resultDataUrl;
+                    img.bgRemoved = true;
+                    img.processed = false;
+                    img.processedBlob = null;
+                    img.processedSize = null;
+
+                    renderGrid();
+                }
+
+                progressText.textContent = 'Done!';
+                progressPercent.textContent = '100%';
+                progressFill.style.width = '100%';
+                showToast('Background removed from all ' + total + ' images!');
+            } catch (err) {
+                showToast('Error during background removal. Some images may not have been processed.');
+                console.error('BG removal error:', err);
+            }
+
+            state.processing = false;
+            updateUI();
+            setTimeout(function() { progressContainer.classList.remove('visible'); }, 2000);
+        });
+
         // ── Clear All ──────────────────────────────────────
 
-        clearBtn.addEventListener('click', () => {
+        clearBtn.addEventListener('click', function() {
             state.images = [];
             state.nextId = 0;
+            downloadBtn.classList.remove('btn-glow');
             updateUI();
+        });
+
+        // ── Crop Modal ─────────────────────────────────────
+
+        function openCropModal(imageId) {
+            var img = state.images.find(function(i) { return i.id === imageId; });
+            if (!img) return;
+
+            cropState.imageId = imageId;
+            cropState.currentRect = null;
+            cropState.isDragging = false;
+
+            cropModalTitle.textContent = 'Crop: ' + img.displayName;
+            cropImage.src = img.bgRemovedDataUrl || img.dataUrl;
+            cropSelection.style.display = 'none';
+            cropApplyBtn.disabled = true;
+
+            cropImage.onload = function() {
+                cropState.displayScale = img.originalWidth / cropImage.clientWidth;
+
+                // Show existing crop if any
+                if (img.cropRegion) {
+                    var r = img.cropRegion;
+                    var s = cropState.displayScale;
+                    cropState.currentRect = {
+                        x: r.x / s,
+                        y: r.y / s,
+                        w: r.width / s,
+                        h: r.height / s
+                    };
+                    updateCropSelectionDisplay();
+                    cropApplyBtn.disabled = false;
+                }
+            };
+
+            cropModalOverlay.style.display = 'flex';
+        }
+
+        function closeCropModal() {
+            cropModalOverlay.style.display = 'none';
+            cropState.imageId = null;
+            cropState.currentRect = null;
+            cropState.isDragging = false;
+        }
+
+        function updateCropSelectionDisplay() {
+            var r = cropState.currentRect;
+            if (!r) return;
+            cropSelection.style.left = r.x + 'px';
+            cropSelection.style.top = r.y + 'px';
+            cropSelection.style.width = r.w + 'px';
+            cropSelection.style.height = r.h + 'px';
+            cropSelection.style.display = 'block';
+
+            var realW = Math.round(r.w * cropState.displayScale);
+            var realH = Math.round(r.h * cropState.displayScale);
+            cropDimsLabel.textContent = realW + ' \u00d7 ' + realH + ' px';
+        }
+
+        // Mouse interaction for crop rectangle
+        cropContainer.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            var rect = cropContainer.getBoundingClientRect();
+            cropState.startX = e.clientX - rect.left;
+            cropState.startY = e.clientY - rect.top;
+            cropState.isDragging = true;
+            cropState.currentRect = { x: cropState.startX, y: cropState.startY, w: 0, h: 0 };
+            cropSelection.style.display = 'block';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!cropState.isDragging) return;
+            e.preventDefault();
+            var rect = cropContainer.getBoundingClientRect();
+            var currentX = Math.max(0, Math.min(e.clientX - rect.left, cropContainer.clientWidth));
+            var currentY = Math.max(0, Math.min(e.clientY - rect.top, cropContainer.clientHeight));
+
+            var x = Math.min(cropState.startX, currentX);
+            var y = Math.min(cropState.startY, currentY);
+            var w = Math.abs(currentX - cropState.startX);
+            var h = Math.abs(currentY - cropState.startY);
+
+            cropState.currentRect = { x: x, y: y, w: w, h: h };
+            updateCropSelectionDisplay();
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (!cropState.isDragging) return;
+            cropState.isDragging = false;
+
+            if (!cropState.currentRect || cropState.currentRect.w < 10 || cropState.currentRect.h < 10) {
+                cropSelection.style.display = 'none';
+                cropState.currentRect = null;
+                cropApplyBtn.disabled = true;
+            } else {
+                cropApplyBtn.disabled = false;
+            }
+        });
+
+        // Generate cropped preview thumbnail
+        function generateCroppedPreview(img) {
+            return new Promise(function(resolve) {
+                var source = new Image();
+                source.onload = function() {
+                    var cr = img.cropRegion;
+                    var canvas = document.createElement('canvas');
+                    canvas.width = cr.width;
+                    canvas.height = cr.height;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(source, cr.x, cr.y, cr.width, cr.height, 0, 0, cr.width, cr.height);
+                    img.croppedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    img.effectiveWidth = cr.width;
+                    img.effectiveHeight = cr.height;
+                    resolve();
+                };
+                source.src = img.bgRemovedDataUrl || img.dataUrl;
+            });
+        }
+
+        // Apply crop
+        cropApplyBtn.addEventListener('click', function() {
+            var img = state.images.find(function(i) { return i.id === cropState.imageId; });
+            if (!img || !cropState.currentRect) return;
+
+            var r = cropState.currentRect;
+            var s = cropState.displayScale;
+
+            img.cropRegion = {
+                x: Math.round(r.x * s),
+                y: Math.round(r.y * s),
+                width: Math.round(r.w * s),
+                height: Math.round(r.h * s)
+            };
+
+            // Reset processed state since source changed
+            img.processed = false;
+            img.processedBlob = null;
+            img.processedSize = null;
+
+            generateCroppedPreview(img).then(function() {
+                closeCropModal();
+                updateUI();
+            });
+        });
+
+        // Reset crop
+        cropResetBtn.addEventListener('click', function() {
+            var img = state.images.find(function(i) { return i.id === cropState.imageId; });
+            if (img) {
+                img.cropRegion = null;
+                img.croppedDataUrl = null;
+                img.effectiveWidth = img.originalWidth;
+                img.effectiveHeight = img.originalHeight;
+                img.processed = false;
+                img.processedBlob = null;
+                img.processedSize = null;
+            }
+            cropState.currentRect = null;
+            cropSelection.style.display = 'none';
+            cropApplyBtn.disabled = true;
+            closeCropModal();
+            updateUI();
+        });
+
+        // Cancel crop
+        cropCancelBtn.addEventListener('click', closeCropModal);
+
+        // Close on overlay click
+        cropModalOverlay.addEventListener('click', function(e) {
+            if (e.target === cropModalOverlay) closeCropModal();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && cropModalOverlay.style.display !== 'none') {
+                closeCropModal();
+            }
         });
     </script>
 </body>
