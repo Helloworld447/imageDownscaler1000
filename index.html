@@ -718,6 +718,14 @@
                     <span class="quality-value" id="qualityValue">85%</span>
                 </div>
             </div>
+
+            <div class="control-group" id="bgFillGroup">
+                <label for="bgFillSelect">BG Fill Color</label>
+                <select id="bgFillSelect">
+                    <option value="#ffffff" selected>White</option>
+                    <option value="#000000">Black</option>
+                </select>
+            </div>
         </div>
 
         <!-- Actions -->
@@ -806,6 +814,8 @@
         const qualitySlider = document.getElementById('qualitySlider');
         const qualityValue = document.getElementById('qualityValue');
         const qualityGroup = document.getElementById('qualityGroup');
+        const bgFillGroup = document.getElementById('bgFillGroup');
+        const bgFillSelect = document.getElementById('bgFillSelect');
         const downscaleBtn = document.getElementById('downscaleBtn');
         const removeBgAllBtn = document.getElementById('removeBgAllBtn');
         const downloadBtn = document.getElementById('downloadBtn');
@@ -972,8 +982,13 @@
         });
 
         formatSelect.addEventListener('change', function() {
-            qualityGroup.style.display = formatSelect.value === 'image/png' ? 'none' : '';
+            var isPng = formatSelect.value === 'image/png';
+            qualityGroup.style.display = isPng ? 'none' : '';
+            bgFillGroup.style.display = formatSelect.value === 'image/jpeg' ? '' : 'none';
         });
+
+        // Hide BG fill by default since JPEG is selected initially — show it
+        bgFillGroup.style.display = '';
 
         // ── Update UI ──────────────────────────────────────
 
@@ -1166,7 +1181,7 @@
             };
         }
 
-        function downscaleImage(imageData, targetW, targetH, format, quality, cropRegion) {
+        function downscaleImage(imageData, targetW, targetH, format, quality, cropRegion, bgFillColor) {
             return new Promise(function(resolve) {
                 var img = new Image();
                 img.onload = function() {
@@ -1177,6 +1192,12 @@
                     var ctx = canvas.getContext('2d');
                     ctx.imageSmoothingEnabled = true;
                     ctx.imageSmoothingQuality = 'high';
+
+                    // Fill background color (for JPEG which doesn't support transparency)
+                    if (bgFillColor) {
+                        ctx.fillStyle = bgFillColor;
+                        ctx.fillRect(0, 0, targetW, targetH);
+                    }
 
                     if (cropRegion) {
                         ctx.drawImage(img,
@@ -1198,14 +1219,7 @@
         downscaleBtn.addEventListener('click', async function() {
             if (state.images.length === 0 || state.processing) return;
 
-            // Warn if JPEG selected but some images have BG removed
             var format = formatSelect.value;
-            var hasBgRemoved = state.images.some(function(img) { return img.bgRemoved; });
-            if (format === 'image/jpeg' && hasBgRemoved) {
-                if (!confirm('JPEG does not support transparency. Background-removed images will have a white background.\n\nSwitch to PNG or WebP to keep transparency.\n\nContinue with JPEG?')) {
-                    return;
-                }
-            }
 
             state.processing = true;
             downscaleBtn.disabled = true;
@@ -1228,7 +1242,8 @@
                 await new Promise(function(r) { setTimeout(r, 10); });
 
                 var source = img.bgRemovedDataUrl || img.dataUrl;
-                var blob = await downscaleImage(source, dims.width, dims.height, format, quality, img.cropRegion);
+                var fillColor = (format === 'image/jpeg' && img.bgRemoved) ? bgFillSelect.value : null;
+                var blob = await downscaleImage(source, dims.width, dims.height, format, quality, img.cropRegion, fillColor);
                 img.processedBlob = blob;
                 img.processedSize = blob.size;
                 img.processed = true;
